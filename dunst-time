@@ -1,0 +1,1 @@
+dunstify "$(date +"%T") $(date +"%D")" "Battery $(cat /sys/class/power_supply/BAT0/capacity)%"

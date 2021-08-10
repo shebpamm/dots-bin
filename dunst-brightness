@@ -1,0 +1,49 @@
+#!/usr/bin/bash
+
+# inspired by gist.github.com/sebastiencs/5d7227f388d93374cebdf72e783fbd6a
+
+
+icon_path=/usr/share/icons/Adwaita/64x64/status/
+notify_id=507
+sink_nr=0   # use `pacmd list-sinks` to find out sink_nr
+
+
+function get_brightness {
+    cat /sys/class/backlight/intel_backlight/brightness 
+}
+
+function get_volume_icon {
+    if [ "$1" -lt 34 ]
+    then
+        echo -n "audio-volume-low-symbolic.symbolic.png"
+    elif [ "$1" -lt 67 ]
+    then
+        echo -n "audio-volume-medium-symbolic.symbolic.png"
+    elif [ "$1" -le 100 ]
+    then
+        echo -n "audio-volume-high-symbolic.symbolic.png"
+    else
+        echo -n "audio-volume-overamplified-symbolic.symbolic.png"
+    fi
+}
+
+function bright_notification {
+    brightness=$((`get_brightness` / 936))
+    vol_icon=`get_volume_icon $volume`
+    bar=$(seq -s "─" $(($brightness / 5)) | sed 's/[0-9]//g')
+    dunstify -r $notify_id -u low -i $icon_path$vol_icon $bar
+}
+
+case $1 in
+    up)
+        lux -s 50
+        bright_notification
+        ;;
+    down)
+        lux -a 50
+        bright_notification
+	    ;;
+    *)
+        echo "Usage: $0 up | down"
+        ;;
+esac
