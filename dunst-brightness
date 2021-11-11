@@ -36,11 +36,11 @@ function bright_notification {
 
 case $1 in
     up)
-        lux -s 50
+        lux -a 50
         bright_notification
         ;;
     down)
-        lux -a 50
+        lux -s 50
         bright_notification
 	    ;;
     *)
